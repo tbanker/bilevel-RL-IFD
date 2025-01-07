@@ -1,0 +1,26 @@
+name: RL-IFD
+channels:
+  - pytorch
+  - gpytorch
+  - conda-forge
+  - default
+dependencies:
+  - python==3.10
+  - botorch==0.11.3
+  - casadi==3.6.5
+  - gpytorch==1.12
+  - linear_operator==0.5.2
+  - matplotlib==3.9.2
+  - omegaconf==2.3
+  - pytorch==2.3
+  - scikit-learn==1.2
+  - scipy==1.14
+  - pip
+  - pip:
+    - asyncua==1.1.5
+    - cvxpy==1.5
+    - cvxpylayers==0.1
+    - diffcp==1.0.23
+    - do-mpc==4.6
+    - ipykernel==6.29.5 
+    - onnx==1.16.2

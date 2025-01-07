@@ -1,0 +1,35 @@
+# General
+seed: 42
+exp_name: "QT_base"
+exp_vars: null
+save_episode: True
+save_model: True
+
+# Environment
+task: QT-reftrack
+discount: 1
+episode_length: 600
+dist_std: 0.
+noise_std: 1e-2
+
+# General policy
+policy_type: "DoMPC"
+horizon: 5
+action_std: 1e-2
+init: null
+n_params: 6
+# CVXPY policy
+u_lim: null
+
+# General learning
+algo: 'REINFORCE'
+num_epi_batches: 41
+epi_batch_size: 8
+# BO
+acq_fun: 'UCB'
+bo_beta: 0.1
+# PGT
+lr: 1e-1
+grad_clip_norm: 10
+# Q-network
+mlp_dim: 64 # 512
