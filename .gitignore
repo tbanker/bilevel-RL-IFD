@@ -173,17 +173,26 @@ cython_debug/
 
 # custom
 .DS_Store
-logs/*
+# logs/*
+logs/LQ-reftrack/BO/algo_BO_init_None_num_epi_batches_101_policy_type_CVXPY_task_LQ-reftrack/*/episodes
+logs/LQ-reftrack/BO/algo_BO_init_A_num_epi_batches_101_policy_type_CVXPY_task_LQ-reftrack/*/episodes
+!logs/LQ-reftrack/BO/algo_BO_init_None_num_epi_batches_101_policy_type_CVXPY_task_LQ-reftrack/14/episodes
+# !logs/LQ-reftrack/BO/algo_BO_init_None_num_epi_batches_101_policy_type_CVXPY_task_LQ-reftrack/**/models/*
+# !logs/LQ-reftrack/BO/algo_BO_init_A_num_epi_batches_101_policy_type_CVXPY_task_LQ-reftrack/**/models/*
+
+logs/LQ-reftrack/REINFORCE/algo_REINFORCE_init_None_num_epi_batches_101_policy_type_CVXPY_task_LQ-reftrack/*/episodes
+logs/LQ-reftrack/REINFORCE/algo_REINFORCE_init_A_num_epi_batches_101_policy_type_CVXPY_task_LQ-reftrack/*/episodes
+!logs/LQ-reftrack/REINFORCE/algo_REINFORCE_init_None_num_epi_batches_101_policy_type_CVXPY_task_LQ-reftrack/14/episodes
+# !logs/LQ-reftrack/REINFORCE/algo_REINFORCE_init_None_num_epi_batches_101_policy_type_CVXPY_task_LQ-reftrack/**/models/*
+# !logs/LQ-reftrack/REINFORCE/algo_REINFORCE_init_A_num_epi_batches_101_policy_type_CVXPY_task_LQ-reftrack/**/models/*
+
+logs/QT-reftrack/REINFORCE/*/episodes
+!logs/QT-reftrack/REINFORCE/8/episodes
 
 # # custom
 # logs/LQ-reftrack/
 # logs/QT-reftrack/
 # # except
-!logs/LQ-reftrack/BO/algo_BO_init_None_num_epi_batches_101_policy_type_CVXPY_task_LQ-reftrack/14/episodes/*.pt
-!logs/LQ-reftrack/BO/algo_BO_init_None_num_epi_batches_101_policy_type_CVXPY_task_LQ-reftrack/*/models/
-!logs/LQ-reftrack/REINFORCE/algo_REINFORCE_init_None_num_epi_batches_101_policy_type_CVXPY_task_LQ-reftrack/14/episodes/*.pt
-!logs/LQ-reftrack/REINFORCE/algo_REINFORCE_init_None_num_epi_batches_101_policy_type_CVXPY_task_LQ-reftrack/*/models/
-!logs/QT-reftrack/REINFORCE/8/episodes/*.pt
 
 # # custom
 # logs/LQ-reftrack/BO/algo_BO_init_A_num_epi_batches_101_policy_type_CVXPY_task_LQ-reftrack/**/episodes/*.pt
