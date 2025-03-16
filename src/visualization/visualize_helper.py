@@ -17,7 +17,7 @@ lw = 1
 ms = 2.
 mew = 0.1
 alpha_sym = 0.5
-J_colors = list(mcolors.TABLEAU_COLORS.values())[:2]
+J_colors = list(mcolors.TABLEAU_COLORS.values())[:3]
 cm_colors = [(0.86, 0.86, 0.86), (0, 0, 0)]
 cust_cm = mcolors.LinearSegmentedColormap.from_list("Custom", cm_colors, N=256)
 mpl.colormaps.register(cmap=cust_cm, name="cust_cm")
@@ -125,7 +125,7 @@ def get_matrices(base_dir, methods, batch_sizes, batches, valid_seeds):
                     
     return res_A, res_B
 
-def calc_norm(res_A, res_B, A, B, norm="fro"):
+def calc_norm(res_A, res_B, A, B, norm="fro", err="std"):
     """calculate (frobenius) norm between learned and true A and B matrices"""
     diff_A = res_A - A
     diff_B = res_B - B
@@ -133,8 +133,12 @@ def calc_norm(res_A, res_B, A, B, norm="fro"):
     frob_A = np.linalg.norm(diff_A, ord=norm, axis=(-1,-2))
     frob_B = np.linalg.norm(diff_B, ord=norm, axis=(-1,-2))
     
-    mean_frob_A, err_frob_A = mean_confidence_interval(frob_A)
-    mean_frob_B, err_frob_B = mean_confidence_interval(frob_B)
+    if err=="std":
+        mean_frob_A, err_frob_A = np.mean(frob_A, axis=-1), 2*np.std(frob_A, axis=-1, ddof=1)
+        mean_frob_B, err_frob_B = np.mean(frob_B, axis=-1), 2*np.std(frob_A, axis=-1, ddof=1)
+    else:
+        mean_frob_A, err_frob_A = mean_confidence_interval(frob_A)
+        mean_frob_B, err_frob_B = mean_confidence_interval(frob_B)
     
     return mean_frob_A, mean_frob_B, err_frob_A, err_frob_B
 
@@ -224,6 +228,60 @@ def plot_norms(batches, mean_frob_A, mean_frob_B, err_frob_A, err_frob_B, plot_m
 
     if fn != None:
         fig.savefig(fn)
+
+def plot_reg_err(batches, mean_reg, err_reg, mean_frob_A, mean_frob_B, err_frob_A, err_frob_B, opt=None, fn=None):
+    """plot performance and model mismatch represented by frobenius-norm for LQ case study"""
+    # plt.rcParams['axes.labelsize'] = 8
+    # plt.rcParams['xtick.labelsize'], plt.rcParams['ytick.labelsize'] = 6, 6
+    # plt.rcParams['font.serif'] = 'Times'
+    SMALL_SIZE = 13
+    MEDIUM_SIZE = 15
+    BIGGER_SIZE = 16
+
+    plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
+    plt.rc('axes', titlesize=MEDIUM_SIZE)     # fontsize of the axes title
+    plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
+    plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+    plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+    plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
+    plt.rc('figure', titlesize=SMALL_SIZE)  # fontsize of the figure title
+    plt.rc('lines', linewidth=3)
+    params = {
+            "text.usetex" : True,
+            "font.family" : "serif",
+            "font.serif" : ["Computer Modern Serif"]}
+    plt.rcParams.update(params)
+    lw = 2.
+    ms = 4.
+    mew = 0.2
+
+    fig, axes = plt.subplots(2, 1, figsize=(6.6, 4.0), sharex=True, layout='constrained', height_ratios=[1, 1], dpi=1200)
+
+    # axes[0].errorbar(batches, mean_reg, err_reg, label=r'$\pi_{\theta}$', color=J_colors[0], fmt=f'-{markers[0]}', lw=lw, markersize=ms, markeredgewidth=mew, markeredgecolor='k', alpha=alpha_sym, capsize=0, capthick=0.0, elinewidth=1.8*lw, zorder=1)
+    axes[0].errorbar(batches, mean_reg, err_reg, label=r'$\pi_{\phi}^{\text{MPC}}$', color=J_colors[0], fmt=f'-{markers[0]}', lw=lw, markersize=ms, markeredgewidth=mew, markeredgecolor='k', alpha=alpha_sym, capsize=0, capthick=0.0, elinewidth=1.8*lw, zorder=1)
+    axes[1].errorbar(batches, mean_frob_A, err_frob_A, label=r'$A$', color=J_colors[1], fmt=f'-{markers[0]}', lw=lw, markersize=ms, markeredgewidth=mew, markeredgecolor='k', alpha=alpha_sym, capsize=0, capthick=0.0, elinewidth=1.8*lw, zorder=1)
+    axes[1].errorbar(batches, mean_frob_B, err_frob_B, label=r'$B$', color=J_colors[2], fmt=f'-{markers[0]}', lw=lw, markersize=ms, markeredgewidth=mew, markeredgecolor='k', alpha=alpha_sym, capsize=0, capthick=0.0, elinewidth=1.8*lw, zorder=1)
+
+    if np.all(mean_reg > 0):
+        # axes[0].set_ylabel(r'Regret$\displaystyle_{E}\bigl(\theta^{(0)}\bigr)$')
+        axes[0].set_ylabel(r'Regret$\displaystyle_{E}\bigl(\phi^{(0)}\bigr)$')
+    else:
+        axes[0].plot(batches, opt*np.ones_like(batches), label=r'$\pi^{\star}$', color='k', ls='--', lw=lw, zorder=0)
+        axes[0].set_ylabel(r'$J(\pi)$')
+        axes[0].set_ylim(-8,0)
+    # axes[1].set_ylabel(r'$\displaystyle||M_{\theta}-M||_{F}$') 
+    axes[1].set_ylabel(r'$\displaystyle||M_{\phi}-M||_{F}$') 
+
+    axes[1].set_ylim(0) 
+    axes[1].set_xlabel('Learning Episodes')
+    axes[1].set_xlim(batches[0], batches[-1])
+
+    axes[0].legend(ncols=2, loc="lower right")
+    axes[1].legend(ncols=2, loc="lower right")
+
+    if fn != None:
+        fig.savefig(fn)
+        fig.savefig(fn.with_name(fn.name+'.pdf'), format='pdf')
 
 def plot_QT_trajs(xs, us, T, batches, seed, fn):
     """plot trajectories for quadruple-tank case study with data1 and data2 coresponding to REINFORCE and BO"""
