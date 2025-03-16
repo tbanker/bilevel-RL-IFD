@@ -24,7 +24,7 @@ If you find this repository or our work helpful, please cite as:
     pages = {2831-2844},
     year = {2025},
     doi = {10.1021/acs.iecr.4c03584},
-    note={Invited Contribution to the Special Issue on AI/ML in Chemical Engineering}
+    note = {Invited Contribution to the Special Issue on AI/ML in Chemical Engineering}
 }
 ```
 
